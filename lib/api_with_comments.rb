@@ -16,12 +16,6 @@ def titleize_name(character)
   names_array = character.split(" ")
   names_array.collect { |name| name[0] = name[0].upcase}
   capital_name = names_array.join(" ")
-  if capital_name.include?("-")
-    capital_name.gsub(/-[a-z]/) {|letter| letter.upcase}
-  else
-    capital_name
-  end
-  # binding.pry
 end
 
 def make_request(link = "http://www.swapi.co/api/people/")
@@ -29,29 +23,34 @@ def make_request(link = "http://www.swapi.co/api/people/")
   character_hash = JSON.parse(all_characters)
 end
 
-# 1. To check each character hash to see if the character
-# is there before going to the next page
-# 2. To create an array of character hashes from all the pages
-# and iterate through that
-
 def get_character_movies_from_api(character)
+  #make the web request
+  # binding.pry
+  # names_array = character.split(" ")
+  # names_array.collect { |name| name[0] = name[0].upcase}
+  # capital_name = names_array.join(" ")
+  # all_characters = RestClient.get('http://www.swapi.co/api/people/')
+  # character_hash = JSON.parse(all_characters)
   film_array = []
   titleized_character = titleize_name(character)
   character_hash = make_request
-  while film_array == []
-    character_hash["results"].each do |person|
-      if person["name"] == titleized_character
-          film_array = person["films"].collect {|film| make_request(film)}
-      end
+  character_hash["results"].each do |person|
+    if person["name"] == titleized_character
+      # person["films"].each do |film|
+        # film_listing = RestClient.get(film)
+        # film_hash = JSON.parse(film_listing)
+        # film_array << make_request(film)
+        film_array = person["films"].collect {|film| make_request(film)}
+      # end
     end
-    character_hash = make_request(character_hash["next"]) if character_hash["next"] != nil
   end
   film_array
-  # binding.pry
 end
 
 def parse_character_movies(films_hash)
+  # some iteration magic and puts out the movies in a nice list
   films_hash.each_with_index do |film, index|
+    # binding.pry
     puts "#{index + 1}. #{film["title"]}"
   end
 end
